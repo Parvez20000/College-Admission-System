@@ -1,0 +1,173 @@
+
+CREATE DATABASE college_admission;
+USE college_admission;
+-- Student Table
+CREATE TABLE students (
+ student_id INT AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(100) NOT NULL,
+ dob DATE,
+ email VARCHAR(100) UNIQUE NOT NULL
+);
+-- Course Table
+CREATE TABLE courses (
+ course_id INT AUTO_INCREMENT PRIMARY KEY,
+ course_name VARCHAR(100) NOT NULL UNIQUE,
+ cutoff_marks INT NOT NULL
+);
+-- Admission Table (Relation between Student & Course)
+CREATE TABLE admissions (
+ admission_id INT AUTO_INCREMENT PRIMARY KEY,
+ student_id INT,
+ course_id INT,
+ marks INT,
+ status VARCHAR(20),
+ FOREIGN KEY (student_id) REFERENCES students(student_id),
+ FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+
+CollegeAdmission  Code:
+import java.sql.*;
+import java.util.Scanner;
+public class CollegeAdmissionSystem {
+ private static final String URL = "jdbc:mysql://localhost:3306/college_admission";
+ private static final String USER = "root"; // change as per your DB
+ private static final String PASSWORD = ""; // change as per your DB
+ private Connection conn;
+ private Scanner sc = new Scanner(System.in);
+ public CollegeAdmissionSystem() {
+ try {
+ conn = DriverManager.getConnection(URL, USER, PASSWORD);
+ System.out.println("■ Database Connected!");
+ } catch (Exception e) {
+}
+ }
+ // 1. Add Student
+ public int addStudent() {
+ try {
+ System.out.print("Enter Student Name: ");
+ String name = sc.nextLine();
+ System.out.print("Enter DOB (YYYY-MM-DD): ");
+ String dob = sc.nextLine();
+ System.out.print("Enter Email: ");
+ String email = sc.nextLine();
+ String sql = "INSERT INTO students(name, dob, email) VALUES(?,?,?)";
+ PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+ ps.setString(1, name);
+ ps.setString(2, dob);
+ ps.setString(3, email);
+ ps.executeUpdate();
+ ResultSet rs = ps.getGeneratedKeys();
+ if (rs.next()) {
+ int id = rs.getInt(1);
+ System.out.println("■ Student Registered! ID: " + id);
+ return id;
+ }
+ } catch (Exception e) {
+ System.out.println("Error: " + e.getMessage());
+ }
+ return -1;
+ }
+ // 2. Add Course
+ public void addCourse() {
+ try {
+ System.out.print("Enter Course Name: ");
+ String courseName = sc.nextLine();
+ System.out.print("Enter Cutoff Marks: ");
+ int cutoff = sc.nextInt();
+ sc.nextLine();
+ String sql = "INSERT INTO courses(course_name, cutoff_marks) VALUES(?,?)";
+ PreparedStatement ps = conn.prepareStatement(sql);
+ ps.setString(1, courseName);
+ ps.setInt(2, cutoff);
+ ps.executeUpdate();
+ System.out.println("■ Course Added Successfully!");
+ } catch (Exception e) {
+ System.out.println("Error: " + e.getMessage());
+ }
+ }
+ // 3. Apply for Admission
+ public void applyAdmission() {
+ try {
+ System.out.print("Enter Student ID: ");
+ int sid = sc.nextInt();
+ sc.nextLine();
+ System.out.print("Enter Course ID: ");
+ int cid = sc.nextInt();
+ sc.nextLine();
+ System.out.print("Enter Marks: ");
+ int marks = sc.nextInt();
+ sc.nextLine();
+ // Fetch cutoff from course
+ String getCourse = "SELECT cutoff_marks FROM courses WHERE course_id=?";
+ PreparedStatement ps1 = conn.prepareStatement(getCourse);
+ ps1.setInt(1, cid);
+ ResultSet rs = ps1.executeQuery();
+ if (rs.next()) {
+ int cutoff = rs.getInt("cutoff_marks");
+ String status = (marks >= cutoff) ? "Approved" : "Rejected";
+ String sql = "INSERT INTO admissions(student_id, course_id, marks, status) VALUE PreparedStatement ps2 = conn.prepareStatement(sql);
+ ps2.setInt(1, sid);
+ ps2.setInt(2, cid);
+ ps2.setInt(3, marks);
+ ps2.setString(4, status);
+ ps2.executeUpdate();
+ System.out.println("■ Admission Status: " + status);
+ } else {
+ System.out.println("Invalid Course ID!");
+ }
+ } catch (Exception e) {
+ System.out.println("Error: " + e.getMessage());
+ }
+ }
+ // 4. View Admissions
+ public void viewAdmissions() {
+ try {
+ String query = "SELECT a.admission_id, s.name, s.email, c.course_name, a.marks, a.st "FROM admissions a " +
+ "JOIN students s ON a.student_id = s.student_id " +
+ "JOIN courses c ON a.course_id = c.course_id";
+ Statement stmt = conn.createStatement();
+ ResultSet rs = stmt.executeQuery(query);
+ System.out.println("\n===== Admission List =====");
+ while (rs.next()) {
+ System.out.println(rs.getInt("admission_id") + " | " +
+ rs.getString("name") + " | " +
+ rs.getString("email") + " | " +
+ rs.getString("course_name") + " | " +
+ rs.getInt("marks") + " | " +
+ rs.getString("status"));
+ }
+ } catch (Exception e) {
+ e.printStackTrace();
+ }
+ }
+ // Menu
+ public void menu() {
+ while (true) {
+ System.out.println("\n--- College Admission System ---");
+ System.out.println("1. Add Student");
+ System.out.println("2. Add Course");
+ System.out.println("3. Apply for Admission");
+ System.out.println("4. View Admissions");
+ System.out.println("5. Exit");
+ System.out.print("Enter choice: ");
+ int choice = sc.nextInt();
+ sc.nextLine();
+ switch (choice) {
+ case 1 -> addStudent();
+ case 2 -> addCourse();
+ case 3 -> applyAdmission();
+ case 4 -> viewAdmissions();
+ case 5 -> {
+ System.out.println("Exiting...");
+ return;
+ }
+ default -> System.out.println("Invalid choice!");
+ }
+ }
+ }
+ public static void main(String[] args) {
+ CollegeAdmissionSystem system = new CollegeAdmissionSystem();
+system.menu();
+ }
+}
+ e.printStackTrace();
