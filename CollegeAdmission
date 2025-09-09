@@ -1,4 +1,5 @@
-
+College Admission System - SQL + Java Code
+SQL Code:
 CREATE DATABASE college_admission;
 USE college_admission;
 -- Student Table
@@ -24,8 +25,7 @@ CREATE TABLE admissions (
  FOREIGN KEY (student_id) REFERENCES students(student_id),
  FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
-
-CollegeAdmission  Code:
+Java Code:
 import java.sql.*;
 import java.util.Scanner;
 public class CollegeAdmissionSystem {
@@ -37,9 +37,10 @@ public class CollegeAdmissionSystem {
  public CollegeAdmissionSystem() {
  try {
  conn = DriverManager.getConnection(URL, USER, PASSWORD);
- System.out.println("■ Database Connected!");
+ System.out.println(" Database Connected!");
  } catch (Exception e) {
-}
+ e.printStackTrace();
+ }
  }
  // 1. Add Student
  public int addStudent() {
@@ -59,7 +60,7 @@ public class CollegeAdmissionSystem {
  ResultSet rs = ps.getGeneratedKeys();
  if (rs.next()) {
  int id = rs.getInt(1);
- System.out.println("■ Student Registered! ID: " + id);
+ System.out.println(" Student Registered! ID: " + id);
  return id;
  }
  } catch (Exception e) {
@@ -80,7 +81,7 @@ public class CollegeAdmissionSystem {
  ps.setString(1, courseName);
  ps.setInt(2, cutoff);
  ps.executeUpdate();
- System.out.println("■ Course Added Successfully!");
+ System.out.println(" Course Added Successfully!");
  } catch (Exception e) {
  System.out.println("Error: " + e.getMessage());
  }
@@ -111,7 +112,7 @@ public class CollegeAdmissionSystem {
  ps2.setInt(3, marks);
  ps2.setString(4, status);
  ps2.executeUpdate();
- System.out.println("■ Admission Status: " + status);
+ System.out.println(" Admission Status: " + status);
  } else {
  System.out.println("Invalid Course ID!");
  }
@@ -153,21 +154,20 @@ public class CollegeAdmissionSystem {
  int choice = sc.nextInt();
  sc.nextLine();
  switch (choice) {
- case 1 -> addStudent();
- case 2 -> addCourse();
- case 3 -> applyAdmission();
- case 4 -> viewAdmissions();
- case 5 -> {
+ case 1  addStudent();
+ case 2  addCourse();
+ case 3  applyAdmission();
+ case 4  viewAdmissions();
+ case 5  {
  System.out.println("Exiting...");
  return;
  }
- default -> System.out.println("Invalid choice!");
+ default  System.out.println("Invalid choice!");
  }
  }
  }
  public static void main(String[] args) {
  CollegeAdmissionSystem system = new CollegeAdmissionSystem();
-system.menu();
+ system.menu();
  }
 }
- e.printStackTrace();
