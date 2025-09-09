@@ -1,5 +1,5 @@
 College Admission System - SQL + Java Code
-SQL Code:
+
 CREATE DATABASE college_admission;
 USE college_admission;
 -- Student Table
@@ -25,7 +25,9 @@ CREATE TABLE admissions (
  FOREIGN KEY (student_id) REFERENCES students(student_id),
  FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
-Java Code:
+
+
+College admission Code:
 import java.sql.*;
 import java.util.Scanner;
 public class CollegeAdmissionSystem {
